@@ -2,6 +2,8 @@
 
 @section('content')
 
+@if ($coins)
+
 <section id="hero">
     <div class="container px-4 py-6 mx-auto">
 
@@ -25,9 +27,9 @@
                 <img src="{{ $coin['image'] ?? 'Coin Image' }}" class="w-8 h-8 mb-2">
                 <h3 class="font-semibold">{{ $coin['name'] ?? 'Uknown' }} ({{ strtoupper($coin['symbol'] ?? 'Coin Symbol') }})</h3>
             </div>
-            <p>${{ number_format($coin['current_price'] ?? '', 2) }}</p>
-            <p class="{{ $coin['price_change_percentage_24h'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
-                {{ number_format($coin['price_change_percentage_24h'], 2) }}%
+            <p>${{ number_format($coin['current_price'] ?? 0, 2) }}</p>
+            <p class="{{ $coin['price_change_percentage_24h'] ?? 0 >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                {{ number_format($coin['price_change_percentage_24h'] ?? 0, 2) }}%
             </p>
         </div>
         @endforeach
@@ -59,7 +61,7 @@
 <section id="All Coins">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold">Top 100 Coins</h1>
+        <h1 class="text-3xl font-bold">Top 50 Coins</h1>
         <input type="text" id="search" placeholder="Search coins..." 
                class="w-1/3 px-4 py-2 text-black border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
@@ -78,23 +80,32 @@
     <div id="coins-list" class="w-full max-h-screen overflow-y-scroll no-scrollbar">
         @foreach($coins as $index => $coin)
         <div class="flex flex-col items-center py-2 border-b border-gray-200 md:flex-row md:items-start">
-            <div class="w-full mb-5 text-start md:w-1/12 md:text-left">{{ $index + 1 }}</div>
+            <div class="w-full mb-5 text-start md:w-1/12 md:text-left">{{ (int) $index + 1 }}</div>
             <div class="flex items-center w-full space-x-2 md:w-3/12">
-                <img src="{{ $coin['image'] }}" alt="{{ $coin['name'] }}" class="w-6 h-6">
-                <span>{{ $coin['name'] }} ({{ strtoupper($coin['symbol']) }})</span>
+                <img src="{{ $coin['image'] ?? 'N/A' }}" alt="{{ $coin['name'] ?? 'Unknown' }}" class="w-6 h-6">
+                <span>{{ $coin['name'] ?? 'Unknown' }} ({{ strtoupper($coin['symbol'] ?? 'N/A') }})</span>
             </div>
-            <div class="w-full md:w-2/12">${{ number_format($coin['current_price'], 2) }}</div>
-            <div class="w-full md:w-2/12">${{ number_format($coin['market_cap']) }}</div>
-            <div class="w-full md:w-2/12 {{ $coin['price_change_percentage_24h'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
-                {{ number_format($coin['price_change_percentage_24h'], 2) }}%
+            <div class="w-full md:w-2/12">${{ number_format($coin['current_price'] ?? 0, 2) }}</div>
+            <div class="w-full md:w-2/12">${{ number_format($coin['market_cap'] ?? 0) }}</div>
+            <div class="w-full md:w-2/12 {{ $coin['price_change_percentage_24h'] ?? 0 >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                {{ number_format($coin['price_change_percentage_24h'] ?? 0, 2) }}%
             </div>
             <div class="w-full text-blue-500 md:w-2/12 hover:underline">
-                <a href="{{ route('coins.show', $coin['id']) }}">View</a>
+                <a href="{{ route('coins.show', $coin['id'] ?? 'NA') }}">View</a>
             </div>
         </div>
         @endforeach
     </div>
+    
 </section>
+
+@else
+
+<div class="flex items-center justify-center w-full h-screen">
+    <h1 class="text-3xl font-bold text-center text-bold">Coins are being rendered please refresh after a minute</h1>
+</div>
+
+@endif
 
 <script>
 // Simple instant filtering

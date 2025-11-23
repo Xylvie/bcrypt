@@ -15,7 +15,7 @@
         <div class="container flex items-center justify-between mx-auto">
             <a href="{{ route('home') }}" class="text-xl"><span class="text-2xl font-bold text-blue-500">B</span>Crypt</a>
             <nav class="flex items-center gap-4">
-                <a href="{{ route('home') }}">Market</a>
+                <a href="{{ route('market') }}">Market</a>
                 @auth
                 <a href="{{ route('watchlist.index') }}">Watchlist</a>
                 @endauth

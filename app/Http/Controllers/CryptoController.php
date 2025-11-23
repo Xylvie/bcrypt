@@ -17,7 +17,7 @@ class CryptoController extends Controller
             $response = Http::withoutVerifying()->get('https://api.coingecko.com/api/v3/coins/markets', [
                 'vs_currency' => 'usd',
                 'order' => 'market_cap_desc',
-                'per_page' => 100,
+                'per_page' => 50,
                 'page' => 1,
                 'sparkline' => false
             ])->json();
@@ -40,6 +40,38 @@ class CryptoController extends Controller
         $btcDominance = $btc && $totalMarketCap > 0 ? ($btc['market_cap'] / $totalMarketCap) * 100 : 0;
 
         return view('home', compact('coins', 'totalCoins', 'totalMarketCap', 'btcDominance'));
+    }
+
+     public function index2()
+    {
+        // Use cache if available
+        $coins = Cache::get('coins');
+        $page = request()->get('page', 1);
+
+        try {
+            $response = Http::withoutVerifying()->get('https://api.coingecko.com/api/v3/coins/markets', [
+                'vs_currency' => 'usd',
+                'order' => 'market_cap_desc',
+                'per_page' => 100,
+                'page' => $page,
+                'sparkline' => false
+            ])->json();
+
+            if ($response && count($response) > 0) {
+                $coins = $response;
+                Cache::put('coins', $coins, 60); // cache for 60 seconds
+            }
+        } catch (\Exception $e) {
+            // Do nothing, fallback to cached data
+        }
+
+        if (!$coins) {
+            $coins = []; // fallback empty array
+        }
+
+        $hasMore = count($coins) == 100;
+
+        return view('market', compact('coins', 'page', 'hasMore'));
     }
 
     // Show individual coin

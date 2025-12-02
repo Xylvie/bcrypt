@@ -26,7 +26,7 @@ class SellController extends Controller
             'coin_name' => 'required|string',
         ]);
 
-        return view('checkout', compact('purchase'));
+        return view('sellcheckout', compact('purchase'));
     }
 
     /**

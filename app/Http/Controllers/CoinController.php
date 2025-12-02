@@ -18,7 +18,7 @@ class CoinController extends Controller
     public function index(Request $request)
     {
         $coins = app(CoinGeckoService::class)->getMarkets(50);
-    return view('home', compact('coins'));
+        return view('home', compact('coins'));
     }
 
     public function show($id)
